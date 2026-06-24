@@ -4,3 +4,6 @@ variable "rg_names" {
 variable "vnet" {
     
 }
+variable "subnet"{
+    
+}
