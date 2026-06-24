@@ -33,79 +33,78 @@ subnet = {
 }
 nic = {
   "zaki_nic" = {
-name                = "zaki-nic"
-location            = "West Europe"
-resource_group_name = "zakisrg"
-ip_configuration = {
-    name                          = "internal"
-    subnet_id = azurerm_subnet.subnets["subnet1"].id
-    private_ip_address_allocation = "Dynamic"
+    name                = "zaki-nic"
+    location            = "West Europe"
+    resource_group_name = "zakisrg"
+    ip_configuration = {
+      name                          = "internal"
+      subnet_key                    = "subnet1"       
+      private_ip_address_allocation = "Dynamic"
+    }
   }
-}
   "zakis_nic" = {
-name                = "zakis-nic"
-location            = "West Europe"
-resource_group_name = "zakisrg"
-ip_configuration = {
-    name                          = "internal"
-    subnet_id = azurerm_subnet.subnets["subnet2"].id
-    private_ip_address_allocation = "Dynamic"
+    name                = "zakis-nic"
+    location            = "West Europe"
+    resource_group_name = "zakisrg"
+    ip_configuration = {
+      name                          = "internal"
+      subnet_key                    = "subnet2"       
+      private_ip_address_allocation = "Dynamic"
+    }
   }
 }
-}
+
 virtual_machine = {
-    vm1 = {
-        name = "zakisvm1"
-location              = "West Europe"
-  resource_group_name   = "zakisrg"
-  network_interface_ids = azurerm_network_interface.network_interface["internal"]
-  vm_size               = "Standard_E2pds_v6"
-   storage_os_disk = {
-    name              = "myosdisk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  storage_image_reference = {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-arm64"
-    version   = "latest"
+  vm1 = {
+    name                = "zakisvm1"
+    location            = "West Europe"
+    resource_group_name = "zakisrg"
+    nic_key             = "zaki_nic"                 
+    vm_size             = "Standard_E2pds_v6"
+    storage_os_disk = {
+      name              = "myosdisk1"
+      caching           = "ReadWrite"
+      create_option     = "FromImage"
+      managed_disk_type = "Standard_LRS"
     }
-os_profile = {
-       computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-}
-os_profile_linux_config = {
-    disable_password_authentication = false
-}
-}
-vm2 = {
-name = "zakisvm2"
-location              = "West Europe"
-  resource_group_name   = "zakisrg"
-  network_interface_ids = azurerm_network_interface.network_interface["zakis-nic"]
-  vm_size               = "Standard_E2pds_v6"
-   storage_os_disk = {
-    name              = "myosdisk2"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  storage_image_reference = {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-arm64"
-    version   = "latest"
+    storage_image_reference = {
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-jammy"
+      sku       = "22_04-lts-arm64"
+      version   = "latest"
     }
-os_profile = {
-       computer_name  = "hostname"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-}
-os_profile_linux_config = {
-    disable_password_authentication = false
-}
-}
+    os_profile = {
+      admin_username = "testadmin"
+      admin_password = "Password1234!"
+    }
+    os_profile_linux_config = {
+      disable_password_authentication = false
+    }
+  }
+  vm2 = {
+    name                = "zakisvm2"
+    location            = "West Europe"
+    resource_group_name = "zakisrg"
+    nic_key             = "zakis_nic"                
+    vm_size             = "Standard_E2pds_v6"
+    storage_os_disk = {
+      name              = "myosdisk2"
+      caching           = "ReadWrite"
+      create_option     = "FromImage"
+      managed_disk_type = "Standard_LRS"
+    }
+    storage_image_reference = {
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-jammy"
+      sku       = "22_04-lts-arm64"
+      version   = "latest"
+    }
+    os_profile = {
+      admin_username = "testadmin"
+      admin_password = "Password1234!"
+    }
+    os_profile_linux_config = {
+      disable_password_authentication = false
+    }
+  }
 }
