@@ -1,6 +1,7 @@
 rg_names = {
     "rg1" = "zakisrg"
 }
+
 vnet = {
   vnet1 = {
     name                = "vnet1"
@@ -15,22 +16,22 @@ vnet = {
     address_space       = ["10.1.0.0/16"]
   }
 }
+
 subnet = {
-    subnet1 = {
-        name = "subnet1"
-        resource_group_name = "zakisrg"
-        virtual_network_name = "zakisvnet"
-        resource_group_location = "West Europe"
+  subnet1 = {
+    name                 = "subnet1"
+    resource_group_name  = "zakisrg"
+    virtual_network_name = "vnet1"       # ✅ fixed
     address_prefixes     = ["10.0.1.0/24"]
-    }
-    subnet2 = {
-        name = "subnet2"
-        resource_group_name = "zakisrg"
-        virtual_network_name = "zakisvnet"
-        resource_group_location = "West Europe"
+  }
+  subnet2 = {
+    name                 = "subnet2"
+    resource_group_name  = "zakisrg"
+    virtual_network_name = "vnet1"       # ✅ fixed
     address_prefixes     = ["10.0.2.0/24"]
-    }
+  }
 }
+
 nic = {
   "zaki_nic" = {
     name                = "zaki-nic"
@@ -38,7 +39,7 @@ nic = {
     resource_group_name = "zakisrg"
     ip_configuration = {
       name                          = "internal"
-      subnet_key                    = "subnet1"       
+      subnet_key                    = "subnet1"
       private_ip_address_allocation = "Dynamic"
     }
   }
@@ -48,7 +49,7 @@ nic = {
     resource_group_name = "zakisrg"
     ip_configuration = {
       name                          = "internal"
-      subnet_key                    = "subnet2"       
+      subnet_key                    = "subnet2"
       private_ip_address_allocation = "Dynamic"
     }
   }
@@ -59,7 +60,7 @@ virtual_machine = {
     name                = "zakisvm1"
     location            = "West Europe"
     resource_group_name = "zakisrg"
-    nic_key             = "zaki_nic"                 
+    nic_key             = "zaki_nic"
     vm_size             = "Standard_E2pds_v6"
     storage_os_disk = {
       name              = "myosdisk1"
@@ -85,7 +86,7 @@ virtual_machine = {
     name                = "zakisvm2"
     location            = "West Europe"
     resource_group_name = "zakisrg"
-    nic_key             = "zakis_nic"                
+    nic_key             = "zakis_nic"
     vm_size             = "Standard_E2pds_v6"
     storage_os_disk = {
       name              = "myosdisk2"
@@ -105,6 +106,41 @@ virtual_machine = {
     }
     os_profile_linux_config = {
       disable_password_authentication = false
+    }
+  }
+}
+
+nsg = {
+  nsg1 = {
+    name                = "zakinsg1"
+    resource_group_name = "zakisrg"
+    location            = "West Europe"
+    security_rule = {
+      name                       = "Allow-HTTP"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+  }
+  nsg2 = {
+    name                = "zakinsg2"
+    resource_group_name = "zakisrg"
+    location            = "West Europe"
+    security_rule = {
+      name                       = "Allow-HTTP"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
     }
   }
 }

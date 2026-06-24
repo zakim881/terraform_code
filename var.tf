@@ -13,3 +13,6 @@ variable "nic"{
 variable "virtual_machine"{
     
 }
+variable "nsg" {
+    
+}
