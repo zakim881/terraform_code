@@ -96,7 +96,7 @@ resource "azurerm_subnet_network_security_group_association" "subnet2" {
   subnet_id                 = azurerm_subnet.example1["subnet2"].id
   network_security_group_id = azurerm_network_security_group.example3["nsg1"].id
 }
-resource "azurerm_public_ip" "example" {
+resource "azurerm_public_ip" "example4" {
 for_each = var.pip
 name = each.value.name
 resource_group_name = each.value.resource_group_name
@@ -104,3 +104,29 @@ location = each.value.location
 allocation_method = each.value.allocation_method
 sku = each.value.sku
 }
+resource "azurerm_lb" "example5" {
+  for_each = var.zakisloadbalancer       
+  name                = each.value.name               
+  resource_group_name = each.value.resource_group_name 
+  location            = each.value.location 
+depends_on = [azurerm_public_ip.example4]
+  frontend_ip_configuration {
+    name                 = "pip1"          
+   public_ip_address_id = azurerm_public_ip.example4[each.value.pip_key].id
+
+}
+}
+resource "azurerm_lb_backend_address_pool" "example6" {
+  for_each        = var.zakisloadbalancer
+  name            = "backendpool1"
+  loadbalancer_id = azurerm_lb.example5[each.key].id
+}
+resource "azurerm_lb_probe" "example7" {
+  for_each        = var.zakisloadbalancer
+  name            = "http-probe"
+loadbalancer_id = azurerm_lb.example5[each.key].id
+  protocol        = "Http"
+  port            = 80  
+  request_path    = "/"
+}
+

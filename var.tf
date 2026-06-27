@@ -19,3 +19,7 @@ variable "nsg" {
 variable "pip"{
     
 }
+variable "zakisloadbalancer" {}
+variable "backend_pool" {}
+variable "lb_probe" {}
+variable "lb_rule" {}

@@ -160,3 +160,35 @@ nsg = {
   sku                 = "Standard"
  }
  }
+zakisloadbalancer = {
+  lb1 = {
+    name                = "zakislb"
+    resource_group_name = "zakisrg"
+    location            = "West Europe"
+    pip_key             = "pip1"
+  }
+}
+
+backend_pool = {
+  pool1 = {
+    name = "backendpool1"
+  }
+}
+
+lb_probe = {
+  probe1 = {
+    name         = "http-probe"
+    protocol     = "Http"
+    port         = 80
+    request_path = "/"
+  }
+}
+
+lb_rule = {
+  rule1 = {
+    name          = "http-rule"
+    protocol      = "Tcp"
+    frontend_port = 80
+    backend_port  = 80
+  }
+}
