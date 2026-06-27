@@ -40,3 +40,9 @@ variable "bastion_subnet" {
     address_prefixes     = list(string)
   }))
 }
+variable "zakistorage"{
+
+}
+variable "zakiscontainer"{
+    
+}
