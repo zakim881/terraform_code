@@ -86,14 +86,21 @@ resource "azurerm_network_security_group" "example3" {
   }
 }
 
-# subnet1 association - hardcoded subnet key
 resource "azurerm_subnet_network_security_group_association" "subnet1" {
   subnet_id                 = azurerm_subnet.example1["subnet1"].id
   network_security_group_id = azurerm_network_security_group.example3["nsg1"].id
 }
 
-# subnet2 association - hardcoded subnet key
+
 resource "azurerm_subnet_network_security_group_association" "subnet2" {
   subnet_id                 = azurerm_subnet.example1["subnet2"].id
   network_security_group_id = azurerm_network_security_group.example3["nsg1"].id
+}
+resource "azurerm_public_ip" "example" {
+for_each = var.pip
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+location = each.value.location
+allocation_method = each.value.allocation_method
+sku = each.value.sku
 }

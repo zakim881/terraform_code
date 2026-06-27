@@ -16,3 +16,6 @@ variable "virtual_machine"{
 variable "nsg" {
     
 }
+variable "pip"{
+    
+}
