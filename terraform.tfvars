@@ -21,13 +21,13 @@ subnet = {
   subnet1 = {
     name                 = "subnet1"
     resource_group_name  = "zakisrg"
-    virtual_network_name = "vnet1"       # ✅ fixed
+    virtual_network_name = "vnet1"     
     address_prefixes     = ["10.0.1.0/24"]
   }
   subnet2 = {
     name                 = "subnet2"
     resource_group_name  = "zakisrg"
-    virtual_network_name = "vnet1"       # ✅ fixed
+    virtual_network_name = "vnet1"    
     address_prefixes     = ["10.0.2.0/24"]
   }
 }
@@ -143,4 +143,70 @@ nsg = {
       destination_address_prefix = "*"
     }
   }
+}
+ pip = {
+  pip1 = {
+    name                = "zakispip"
+  location            = "West Europe"
+  resource_group_name = "zakisrg"
+  allocation_method   = "Static"
+  sku                 = "Standard"
+ }
+ pip2 = {
+    name                = "zakispip1"
+  location            = "West Europe"
+  resource_group_name = "zakisrg"
+  allocation_method   = "Static"
+  sku                 = "Standard"
+ }
+ }
+zakisloadbalancer = {
+  lb1 = {
+    name                = "zakislb"
+    resource_group_name = "zakisrg"
+    location            = "West Europe"
+    pip_key             = "pip1"
+  }
+}
+
+backend_pool = {
+  pool1 = {
+    name = "backendpool1"
+  }
+}
+
+lb_probe = {
+  probe1 = {
+    name         = "http-probe"
+    protocol     = "Http"
+    port         = 80
+    request_path = "/"
+  }
+}
+
+lb_rule = {
+  rule1 = {
+    name          = "http-rule"
+    protocol      = "Tcp"
+    frontend_port = 80
+    backend_port  = 80
+  }
+}
+bastion_subnet = {
+  "subnetting" = {
+      name                 = "AzureBastionSubnet"
+  resource_group_name  = "zakisrg"
+  virtual_network_name = "zakisvnet"
+  address_prefixes     = ["10.0.3.0/26"]
+   virtual_network_name = "vnet1" 
+}
+}
+bastion = {
+  "bastion1" = {
+    name                = "zakisbastion"
+  location            = "West Europe"
+  resource_group_name = "zakisrg"
+  pip_key             = "pip2"
+
+}
 }

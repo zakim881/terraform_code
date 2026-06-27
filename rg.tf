@@ -86,14 +86,86 @@ resource "azurerm_network_security_group" "example3" {
   }
 }
 
-# subnet1 association - hardcoded subnet key
 resource "azurerm_subnet_network_security_group_association" "subnet1" {
   subnet_id                 = azurerm_subnet.example1["subnet1"].id
   network_security_group_id = azurerm_network_security_group.example3["nsg1"].id
 }
 
-# subnet2 association - hardcoded subnet key
+
 resource "azurerm_subnet_network_security_group_association" "subnet2" {
   subnet_id                 = azurerm_subnet.example1["subnet2"].id
   network_security_group_id = azurerm_network_security_group.example3["nsg1"].id
+}
+resource "azurerm_public_ip" "example4" {
+for_each = var.pip
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+location = each.value.location
+allocation_method = each.value.allocation_method
+sku = each.value.sku
+}
+resource "azurerm_lb" "example5" {
+  for_each = var.zakisloadbalancer       
+  name                = each.value.name               
+  resource_group_name = each.value.resource_group_name 
+  location            = each.value.location 
+depends_on = [azurerm_public_ip.example4]
+  frontend_ip_configuration {
+    name                 = "pip1"          
+   public_ip_address_id = azurerm_public_ip.example4[each.value.pip_key].id
+
+}
+}
+resource "azurerm_lb_backend_address_pool" "example6" {
+  for_each        = var.zakisloadbalancer
+  name            = "backendpool1"
+  loadbalancer_id = azurerm_lb.example5[each.key].id
+}
+resource "azurerm_lb_probe" "example7" {
+  for_each        = var.zakisloadbalancer
+  name            = "http-probe"
+loadbalancer_id = azurerm_lb.example5[each.key].id
+  protocol        = "Http"
+  port            = 80  
+  request_path    = "/"
+}
+resource "azurerm_subnet" "example8" {
+for_each = var.bastion_subnet
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+virtual_network_name = each.value.virtual_network_name
+address_prefixes = each.value.address_prefixes
+depends_on = [azurerm_virtual_network.example]
+}
+
+resource "azurerm_bastion_host" "example9" {
+for_each = var.bastion
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+location = each.value.location
+sku = "Standard"
+
+ip_configuration {
+  name                 = "configuration"
+  subnet_id            = azurerm_subnet.example8["subnetting"].id
+  public_ip_address_id = azurerm_public_ip.example4[each.value.pip_key].id
+}
+depends_on = [azurerm_subnet.example8, azurerm_public_ip.example4]
+}
+resource "azurerm_storage_account" "example10" {
+  name                     = "zakisstorage"
+  resource_group_name      = "zakisrg"
+  location                 = "West Europe"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  depends_on = [azurerm_resource_group.rg]
+}
+
+resource "azurerm_storage_container" "example11" {
+  name                  = "tfstate"
+    storage_account_id    = azurerm_storage_account.example10.id 
+  container_access_type = "private"
+
+  depends_on = [azurerm_storage_account.example10]
 }
