@@ -129,4 +129,26 @@ loadbalancer_id = azurerm_lb.example5[each.key].id
   port            = 80  
   request_path    = "/"
 }
+resource "azurerm_subnet" "example8" {
+for_each = var.bastion_subnet
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+virtual_network_name = each.value.virtual_network_name
+address_prefixes = each.value.address_prefixes
+depends_on = [azurerm_virtual_network.example]
+}
 
+resource "azurerm_bastion_host" "example9" {
+for_each = var.bastion
+name = each.value.name
+resource_group_name = each.value.resource_group_name
+location = each.value.location
+sku = "Standard"
+
+ip_configuration {
+  name                 = "configuration"
+  subnet_id            = azurerm_subnet.example8["subnetting"].id
+  public_ip_address_id = azurerm_public_ip.example4[each.value.pip_key].id
+}
+depends_on = [azurerm_subnet.example8, azurerm_public_ip.example4]
+}

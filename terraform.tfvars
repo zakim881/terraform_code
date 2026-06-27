@@ -192,3 +192,21 @@ lb_rule = {
     backend_port  = 80
   }
 }
+bastion_subnet = {
+  "subnetting" = {
+      name                 = "AzureBastionSubnet"
+  resource_group_name  = "zakisrg"
+  virtual_network_name = "zakisvnet"
+  address_prefixes     = ["10.0.3.0/26"]
+   virtual_network_name = "vnet1" 
+}
+}
+bastion = {
+  "bastion1" = {
+    name                = "zakisbastion"
+  location            = "West Europe"
+  resource_group_name = "zakisrg"
+  pip_key             = "pip2"
+
+}
+}
